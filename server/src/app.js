@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
+const mongoose = require('mongoose');
 const sanitize = require('./middleware/sanitize');
 
 const app = express();
@@ -46,8 +47,12 @@ app.use(
 const corsOptions = {
   origin: (origin, callback) => {
     const normalizedOrigin = origin ? origin.replace(/\/+$/, '') : origin;
-    // Allow requests with no origin (e.g., mobile apps, curl, server-to-server) or matching allowedOrigins
-    if (!normalizedOrigin || allowedOrigins.includes(normalizedOrigin)) {
+    // Allow requests with no origin (e.g., mobile apps, curl, server-to-server) or matching allowedOrigins or Vercel preview domains
+    if (
+      !normalizedOrigin ||
+      allowedOrigins.includes(normalizedOrigin) ||
+      /^https:\/\/skill-bridge[a-z0-9-]*\.vercel\.app$/.test(normalizedOrigin)
+    ) {
       callback(null, true);
     } else {
       callback(new Error(`Origin ${origin} not allowed by CORS`));
@@ -66,6 +71,39 @@ app.options('*', cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// NoSQL operator injection sanitization
+app.use(sanitize);
+
+// HTTP request logger
+if (process.env.NODE_ENV !== 'test') {
+  app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+}
+
+// ==========================================
+// 2. ROOT & HEALTH CHECK ENDPOINTS (Pre-DB check for instant responsiveness & monitoring)
+// ==========================================
+app.get(['/', '/api'], (req, res) => {
+  const isDbConnected = mongoose.connection.readyState === 1;
+  res.status(200).json({
+    success: true,
+    message: 'SkillBridge API Backend is running',
+    environment: process.env.NODE_ENV || 'development',
+    database: isDbConnected ? 'connected' : 'disconnected',
+    health: '/api/health',
+  });
+});
+
+app.get('/api/health', (req, res) => {
+  const isDbConnected = mongoose.connection.readyState === 1;
+  res.status(200).json({
+    success: true,
+    message: 'SkillBridge API is running',
+    environment: process.env.NODE_ENV || 'development',
+    database: isDbConnected ? 'connected' : 'disconnected',
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // Ensure database connection is ready for API requests (vital for serverless cold/warm starts)
 const connectDB = require('./config/db');
 app.use(async (req, res, next) => {
@@ -83,15 +121,6 @@ app.use(async (req, res, next) => {
     });
   }
 });
-
-// NoSQL operator injection sanitization
-app.use(sanitize);
-
-
-// HTTP request logger
-if (process.env.NODE_ENV !== 'test') {
-  app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
-}
 
 // General Rate Limiting: Calibrated per environment
 // - Production: 200 requests per 15 minutes (or configurable via GENERAL_RATE_LIMIT_MAX)
@@ -132,26 +161,6 @@ app.use(
     index: false,
   })
 );
-
-// ==========================================
-// Root informational endpoint
-app.get('/', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'SkillBridge API Backend is running',
-    environment: process.env.NODE_ENV || 'development',
-    health: '/api/health',
-  });
-});
-
-app.get('/api/health', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'SkillBridge API is running',
-    environment: process.env.NODE_ENV || 'development',
-    timestamp: new Date().toISOString(),
-  });
-});
 
 // Authentication routes
 const authRoutes = require('./routes/authRoutes');

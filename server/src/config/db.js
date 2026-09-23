@@ -16,10 +16,10 @@ const connectDB = async () => {
     return cachedConnection;
   }
 
-  const uri = process.env.MONGODB_URI;
+  const uri = process.env.MONGODB_URI || process.env.MONGO_URI;
 
   if (!uri) {
-    console.error('❌ FATAL ERROR: MONGODB_URI environment variable is not defined.');
+    console.error('❌ FATAL ERROR: Neither MONGODB_URI nor MONGO_URI environment variable is defined.');
     console.error('👉 Please configure MONGODB_URI in your server/.env file or Vercel Environment Variables.');
     throw new Error('MONGODB_URI environment variable is missing.');
   }
