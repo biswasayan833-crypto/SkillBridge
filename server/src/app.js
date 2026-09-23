@@ -12,12 +12,19 @@ const app = express();
 // 1. SECURITY & UTILITY MIDDLEWARES
 // ==========================================
 
-// Parse allowed CORS origins from CLIENT_URL (supports comma-separated origins)
-const rawClientUrl = process.env.CLIENT_URL || 'http://localhost:5173,http://127.0.0.1:5173';
-const allowedOrigins = rawClientUrl
+// Parse allowed CORS origins from CLIENT_URL (supports comma-separated origins and normalizes trailing slashes)
+const defaultOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://skill-bridge-dokcv8jd0-ayan-biswas.vercel.app',
+];
+const rawClientUrl = process.env.CLIENT_URL || '';
+const configuredOrigins = rawClientUrl
   .split(',')
-  .map((origin) => origin.trim())
+  .map((origin) => origin.trim().replace(/\/+$/, ''))
   .filter(Boolean);
+
+const allowedOrigins = Array.from(new Set([...defaultOrigins, ...configuredOrigins]));
 
 // Helmet for secure HTTP headers (hardened with CORP and CSP)
 app.use(
@@ -35,29 +42,51 @@ app.use(
   })
 );
 
-// CORS configuration (rejects untrusted origins in production)
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (e.g., mobile apps, curl, server-to-server) or matching allowedOrigins
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error(`Origin ${origin} not allowed by CORS`));
-      }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
+// CORS configuration (rejects untrusted origins in production, handles preflight cleanly)
+const corsOptions = {
+  origin: (origin, callback) => {
+    const normalizedOrigin = origin ? origin.replace(/\/+$/, '') : origin;
+    // Allow requests with no origin (e.g., mobile apps, curl, server-to-server) or matching allowedOrigins
+    if (!normalizedOrigin || allowedOrigins.includes(normalizedOrigin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Body parsers
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Ensure database connection is ready for API requests (vital for serverless cold/warm starts)
+const connectDB = require('./config/db');
+app.use(async (req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    return next();
+  }
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('Database connection error in request pipeline:', err.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Database connection failed. Please ensure MONGODB_URI is properly configured.',
+    });
+  }
+});
+
 // NoSQL operator injection sanitization
 app.use(sanitize);
+
 
 // HTTP request logger
 if (process.env.NODE_ENV !== 'test') {
@@ -105,8 +134,16 @@ app.use(
 );
 
 // ==========================================
-// 2. HEALTH CHECK & API ROUTES
-// ==========================================
+// Root informational endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'SkillBridge API Backend is running',
+    environment: process.env.NODE_ENV || 'development',
+    health: '/api/health',
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
