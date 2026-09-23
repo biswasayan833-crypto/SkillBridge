@@ -1,0 +1,22 @@
+{
+  "name": "skillbridge",
+  "version": "1.0.0",
+  "description": "SkillBridge — Internship & Job Management Platform",
+  "private": true,
+  "scripts": {
+    "client": "npm run dev --prefix client",
+    "server": "npm run dev --prefix server",
+    "client:build": "npm run build --prefix client",
+    "server:start": "npm start --prefix server"
+  },
+  "keywords": [
+    "skillbridge",
+    "internship",
+    "job-board",
+    "mern",
+    "react",
+    "express"
+  ],
+  "author": "SkillBridge Team",
+  "license": "ISC"
+}
