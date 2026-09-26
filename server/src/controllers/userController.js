@@ -117,7 +117,6 @@ const uploadResume = async (req, res, next) => {
     }
 
     const previousFilename = user.resume?.filename;
-    const sanitizedOriginal = req.file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
     const relativeUrl = `/uploads/resumes/${req.file.filename}`;
 
     // Update metadata on User document
@@ -153,7 +152,7 @@ const uploadResume = async (req, res, next) => {
     if (req.file && fs.existsSync(req.file.path)) {
       try {
         fs.unlinkSync(req.file.path);
-      } catch (err) {
+      } catch (_err) {
         // ignore
       }
     }

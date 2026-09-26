@@ -9,10 +9,6 @@ const ManageOpportunitiesPage = () => {
   const [actionNotice, setActionNotice] = useState({ type: '', text: '' });
   const [deactivatingId, setDeactivatingId] = useState(null);
 
-  useEffect(() => {
-    fetchMyOpportunities();
-  }, []);
-
   const fetchMyOpportunities = async () => {
     setLoading(true);
     setErrorMessage('');
@@ -27,6 +23,10 @@ const ManageOpportunitiesPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchMyOpportunities();
+  }, []);
 
   const handleDeactivate = async (id, title) => {
     const confirmed = window.confirm(

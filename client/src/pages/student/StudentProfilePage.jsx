@@ -4,7 +4,7 @@ import userService from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
 
 const StudentProfilePage = () => {
-  const { user: authUser, refreshUser } = useAuth();
+  const { refreshUser } = useAuth();
 
   const [profile, setProfile] = useState({
     name: '',
@@ -28,11 +28,6 @@ const StudentProfilePage = () => {
   const [deletingResume, setDeletingResume] = useState(false);
 
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
-
-  // Fetch initial profile
-  useEffect(() => {
-    fetchProfile();
-  }, []);
 
   const fetchProfile = async () => {
     try {
@@ -64,6 +59,12 @@ const StudentProfilePage = () => {
       setLoading(false);
     }
   };
+
+  // Fetch initial profile
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

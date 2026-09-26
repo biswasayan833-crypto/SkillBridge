@@ -1,4 +1,4 @@
-const { body, query } = require('express-validator');
+const { body } = require('express-validator');
 
 const ALLOWED_TYPES = ['internship', 'full-time', 'part-time', 'contract'];
 const ALLOWED_WORK_MODES = ['remote', 'hybrid', 'onsite'];

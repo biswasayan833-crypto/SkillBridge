@@ -189,7 +189,7 @@ const LoginPage = () => {
           }}
         >
           <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link
               to="/register"
               style={{

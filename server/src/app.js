@@ -181,7 +181,7 @@ app.use('/api/users', userRoutes);
 // ==========================================
 // 3. 404 NOT FOUND HANDLER
 // ==========================================
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).json({
     success: false,
     message: `API endpoint not found: ${req.method} ${req.originalUrl}`,
@@ -191,7 +191,7 @@ app.use((req, res, next) => {
 // ==========================================
 // 4. CENTRALIZED GLOBAL ERROR HANDLER
 // ==========================================
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   // If CORS error
   if (err.message && err.message.includes('CORS')) {
     return res.status(403).json({

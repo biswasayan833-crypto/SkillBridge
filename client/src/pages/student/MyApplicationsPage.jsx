@@ -115,7 +115,7 @@ const MyApplicationsPage = () => {
               lineHeight: 1.6,
             }}
           >
-            You haven't submitted any applications yet. Discover active internships and full-time opportunities to get started!
+            You haven&apos;t submitted any applications yet. Discover active internships and full-time opportunities to get started!
           </p>
           <Link to="/opportunities" className="btn btn-primary" style={{ padding: '0.65rem 1.4rem' }}>
             Browse Opportunities &rarr;

@@ -288,7 +288,7 @@ const OpportunitiesPage = () => {
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
           <h3 style={{ marginBottom: '0.5rem' }}>No Opportunities Found</h3>
           <p style={{ maxWidth: '480px', margin: '0 auto 1.5rem', color: 'var(--text-secondary)' }}>
-            We couldn't find any opportunities matching your active query. Try broadening your criteria or reset your filters.
+            We couldn&apos;t find any opportunities matching your active query. Try broadening your criteria or reset your filters.
           </p>
           {hasActiveFilters && (
             <button
