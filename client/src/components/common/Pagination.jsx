@@ -52,7 +52,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, hasNextPage, hasPre
           >
             1
           </button>
-          {start > 2 && <span style={{ color: 'var(--gray-400)', padding: '0 0.25rem' }}>...</span>}
+          {start > 2 && <span style={{ color: 'var(--text-muted)', padding: '0 0.25rem' }}>...</span>}
         </>
       )}
 
@@ -74,7 +74,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, hasNextPage, hasPre
 
       {end < totalPages && (
         <>
-          {end < totalPages - 1 && <span style={{ color: 'var(--gray-400)', padding: '0 0.25rem' }}>...</span>}
+          {end < totalPages - 1 && <span style={{ color: 'var(--text-muted)', padding: '0 0.25rem' }}>...</span>}
           <button
             type="button"
             className="btn btn-secondary"

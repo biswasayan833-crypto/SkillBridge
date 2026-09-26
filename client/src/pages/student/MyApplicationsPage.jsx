@@ -46,7 +46,7 @@ const MyApplicationsPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: '1000px', margin: '1.5rem auto 3rem' }}>
+    <div style={{ maxWidth: '1050px', margin: '1.5rem auto 3.5rem' }}>
       {/* Page Header */}
       <div
         style={{
@@ -59,20 +59,20 @@ const MyApplicationsPage = () => {
         }}
       >
         <div>
-          <h1 style={{ fontSize: '2.25rem', fontWeight: 800, marginBottom: '0.25rem' }}>
+          <h1 style={{ fontSize: '1.875rem', fontWeight: 700, marginBottom: '0.35rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
             My Applications
           </h1>
-          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-            Track your submitted applications and monitor progression as recruiters review candidates.
+          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.925rem' }}>
+            Track submitted applications and monitor progression through the review funnel.
           </p>
         </div>
 
         <Link
           to="/opportunities"
-          className="btn btn-primary"
-          style={{ padding: '0.6rem 1.25rem', fontSize: '0.9rem' }}
+          className="btn btn-secondary"
+          style={{ padding: '0.55rem 1.15rem', fontSize: '0.875rem' }}
         >
-          Explore More Opportunities &rarr;
+          Explore Opportunities &rarr;
         </Link>
       </div>
 
@@ -84,14 +84,14 @@ const MyApplicationsPage = () => {
             color: 'var(--danger-text)',
             border: '1px solid var(--danger-border)',
             borderRadius: 'var(--radius-md)',
-            padding: '1rem 1.25rem',
+            padding: '0.875rem 1.25rem',
             marginBottom: '1.5rem',
+            fontSize: '0.875rem',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
           }}
         >
-          <span>⚠️</span>
           <span>{errorMessage}</span>
         </div>
       )}
@@ -99,25 +99,24 @@ const MyApplicationsPage = () => {
       {/* Loading State */}
       {loading ? (
         <div className="card" style={{ textAlign: 'center', padding: '3.5rem 2rem' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>⏳</div>
-          <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Loading your applications...</p>
+          <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.925rem' }}>Loading your applications...</p>
         </div>
       ) : applications.length === 0 ? (
         /* Empty State */
         <div className="card" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📄</div>
-          <h3 style={{ marginBottom: '0.5rem', fontWeight: 700 }}>No Applications Yet</h3>
+          <h3 style={{ marginBottom: '0.5rem', fontWeight: 600, color: 'var(--text-primary)' }}>No Applications Yet</h3>
           <p
             style={{
               color: 'var(--text-secondary)',
-              maxWidth: '440px',
+              maxWidth: '420px',
               margin: '0 auto 1.5rem',
-              lineHeight: 1.6,
+              lineHeight: 1.5,
+              fontSize: '0.925rem',
             }}
           >
-            You haven&apos;t submitted any applications yet. Discover active internships and full-time opportunities to get started!
+            You have not submitted any applications yet. Discover active internships and full-time opportunities to get started.
           </p>
-          <Link to="/opportunities" className="btn btn-primary" style={{ padding: '0.65rem 1.4rem' }}>
+          <Link to="/opportunities" className="btn btn-primary" style={{ padding: '0.65rem 1.35rem' }}>
             Browse Opportunities &rarr;
           </Link>
         </div>
@@ -131,29 +130,29 @@ const MyApplicationsPage = () => {
                   width: '100%',
                   borderCollapse: 'collapse',
                   textAlign: 'left',
-                  fontSize: '0.925rem',
+                  fontSize: '0.875rem',
                 }}
               >
                 <thead>
                   <tr
                     style={{
-                      backgroundColor: 'var(--bg-overlay)',
+                      backgroundColor: 'var(--bg-card)',
                       borderBottom: '1px solid var(--border-subtle)',
                     }}
                   >
-                    <th style={{ padding: '1rem 1.25rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                    <th style={{ padding: '0.875rem 1.25rem', fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                       Opportunity & Company
                     </th>
-                    <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                    <th style={{ padding: '0.875rem 1rem', fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                       Applied Date
                     </th>
-                    <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                    <th style={{ padding: '0.875rem 1rem', fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                       Status
                     </th>
-                    <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                    <th style={{ padding: '0.875rem 1rem', fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                       Last Updated
                     </th>
-                    <th style={{ padding: '1rem 1.25rem', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'right' }}>
+                    <th style={{ padding: '0.875rem 1.25rem', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'right', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                       Action
                     </th>
                   </tr>
@@ -170,15 +169,15 @@ const MyApplicationsPage = () => {
                         }}
                       >
                         <td style={{ padding: '1rem 1.25rem' }}>
-                          <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.95rem' }}>
+                          <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.925rem' }}>
                             {opp.title || 'Opportunity'}
                           </div>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
                             {opp.company || 'Company'} {opp.location && `• ${opp.location}`}
                           </div>
                         </td>
 
-                        <td style={{ padding: '1rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                        <td style={{ padding: '1rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
                           {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : 'N/A'}
                         </td>
 
@@ -186,15 +185,15 @@ const MyApplicationsPage = () => {
                           <ApplicationStatusBadge status={app.status} />
                         </td>
 
-                        <td style={{ padding: '1rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                        <td style={{ padding: '1rem', color: 'var(--text-muted)', fontSize: '0.825rem' }}>
                           {app.statusUpdatedAt ? new Date(app.statusUpdatedAt).toLocaleDateString() : 'N/A'}
                         </td>
 
                         <td style={{ padding: '1rem 1.25rem', textAlign: 'right' }}>
                           <Link
                             to={`/student/applications/${app._id}`}
-                            className="btn btn-outline"
-                            style={{ padding: '0.35rem 0.8rem', fontSize: '0.825rem' }}
+                            className="btn btn-secondary"
+                            style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
                           >
                             View Details
                           </Link>

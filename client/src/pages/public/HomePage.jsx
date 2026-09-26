@@ -1,263 +1,140 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import opportunityService from '../../services/opportunityService';
+import OpportunityCard from '../../components/opportunities/OpportunityCard';
+import heroImage from '../../assets/images/skillbridge-hero-clean.webp';
 
 const HomePage = () => {
   const { user, isAuthenticated } = useAuth();
+  const [featuredOpportunities, setFeaturedOpportunities] = useState([]);
+  const [loadingFeatured, setLoadingFeatured] = useState(true);
+  const [pointerOffset, setPointerOffset] = useState({ x: 0, y: 0 });
+  const heroRef = useRef(null);
+
+  const handleMouseMove = (e) => {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+    if (window.innerWidth < 1024) return;
+
+    const rect = heroRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    // Normalized offset between -0.5 and +0.5
+    const normX = (e.clientX - rect.left) / rect.width - 0.5;
+    const normY = (e.clientY - rect.top) / rect.height - 0.5;
+
+    // Ultra-subtle: max 3px horizontally, max 2px vertically
+    const offsetX = Math.round(normX * 6 * 10) / 10;
+    const offsetY = Math.round(normY * 4 * 10) / 10;
+
+    setPointerOffset({ x: offsetX, y: offsetY });
+  };
+
+  const handleMouseLeave = () => {
+    setPointerOffset({ x: 0, y: 0 });
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadFeatured = async () => {
+      try {
+        const res = await opportunityService.getOpportunities({ limit: 3 });
+        if (isMounted && res.success && Array.isArray(res.data)) {
+          setFeaturedOpportunities(res.data);
+        }
+      } catch {
+        // Graceful fallback if service is momentarily offline
+      } finally {
+        if (isMounted) setLoadingFeatured(false);
+      }
+    };
+    loadFeatured();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
-    <div>
-      {/* Cinematic Hero Section */}
+    <div style={{ paddingBottom: '3rem' }}>
+      {/* ===================================================================
+          1. CINEMATIC HERO SECTION
+          =================================================================== */}
       <section
-        className="card"
-        style={{
-          textAlign: 'center',
-          padding: '5rem 2rem 4.5rem',
-          marginBottom: '3.5rem',
-          background: 'linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%)',
-          border: '1px solid var(--border-medium)',
-          position: 'relative',
-          overflow: 'hidden',
-          boxShadow: 'var(--shadow-lg), var(--shadow-glow)',
-        }}
+        ref={heroRef}
+        className="hero-cinematic"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
       >
-        {/* Ambient Top Glow Accent */}
+        {/* Background Visual Layer */}
         <div
-          style={{
-            position: 'absolute',
-            top: '-60px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '600px',
-            height: '240px',
-            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%)',
-            pointerEvents: 'none',
-          }}
-        />
-
-        {/* Factual Product Tag */}
-        <div style={{ marginBottom: '1.5rem', position: 'relative' }}>
-          <span
-            className="badge badge-purple"
-            style={{
-              padding: '0.4rem 1rem',
-              fontSize: '0.85rem',
-              letterSpacing: '0.04em',
-            }}
-          >
-            🌉 Career Opportunity Platform for Students & Employers
-          </span>
-        </div>
-
-        {/* Headline */}
-        <h1
-          style={{
-            fontSize: 'clamp(2.4rem, 5vw, 3.5rem)',
-            fontWeight: 800,
-            maxWidth: '850px',
-            margin: '0 auto 1.5rem',
-            lineHeight: 1.18,
-            letterSpacing: '-0.03em',
-          }}
+          className="hero-bg-layer"
+          aria-hidden="true"
+          style={
+            pointerOffset.x !== 0 || pointerOffset.y !== 0
+              ? { transform: `translate3d(${pointerOffset.x}px, ${pointerOffset.y}px, 0)` }
+              : undefined
+          }
         >
-          Connecting Student Ambition with{' '}
-          <span
-            style={{
-              background: 'var(--gradient-brand)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
-            Career Opportunities
-          </span>
-        </h1>
-
-        {/* Subtitle with Factual Product Language */}
-        <p
-          style={{
-            fontSize: '1.2rem',
-            color: 'var(--text-secondary)',
-            maxWidth: '680px',
-            margin: '0 auto 2.25rem',
-            lineHeight: 1.65,
-          }}
-        >
-          SkillBridge bridges the campus-to-career transition through structured applications,
-          centralized resume management, and an API-driven status tracking workflow.
-        </p>
-
-        {/* Primary Action Buttons */}
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
-          <Link
-            to="/opportunities"
-            className="btn btn-primary btn-lg"
-            style={{ padding: '0.85rem 2rem' }}
-          >
-            Explore Opportunities &rarr;
-          </Link>
-
-          {!isAuthenticated ? (
-            <Link
-              to="/register"
-              className="btn btn-secondary btn-lg"
-              style={{ padding: '0.85rem 2rem' }}
-            >
-              Create Account
-            </Link>
-          ) : user?.role === 'student' ? (
-            <Link
-              to="/student/dashboard"
-              className="btn btn-secondary btn-lg"
-              style={{ padding: '0.85rem 2rem' }}
-            >
-              Student Dashboard &rarr;
-            </Link>
-          ) : (
-            <Link
-              to="/recruiter/dashboard"
-              className="btn btn-secondary btn-lg"
-              style={{ padding: '0.85rem 2rem' }}
-            >
-              Recruiter Dashboard &rarr;
-            </Link>
-          )}
+          <img
+            src={heroImage}
+            alt="SkillBridge Developer Workspace"
+            className="hero-cinematic-img"
+            loading="eager"
+          />
+          <div className="hero-overlay-gradient" />
         </div>
 
-        {/* Factual Platform Highlights Bar */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '1.5rem',
-            flexWrap: 'wrap',
-            paddingTop: '2rem',
-            borderTop: '1px solid var(--border-subtle)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-            <span style={{ color: 'var(--accent-emerald)' }}>✓</span>
-            <span>Structured Applications</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-            <span style={{ color: 'var(--accent-blue)' }}>✓</span>
-            <span>Application Status Tracking</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-            <span style={{ color: 'var(--primary-400)' }}>✓</span>
-            <span>Student & Recruiter Workflows</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-            <span style={{ color: 'var(--accent-purple)' }}>✓</span>
-            <span>5-Stage Review Funnel</span>
-          </div>
-        </div>
-      </section>
-
-      {/* Role Pillars Grid */}
-      <section style={{ marginBottom: '4rem' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <h2 style={{ marginBottom: '0.75rem' }}>Tailored Capabilities for Both Sides of Hiring</h2>
-          <p style={{ maxWidth: '600px', margin: '0 auto' }}>
-            Whether you are embarking on your first internship or building a dynamic team, SkillBridge simplifies candidate and opportunity management.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2" style={{ gap: '2rem' }}>
-          {/* Student Pillar Card */}
-          <div className="card card-hover" style={{ padding: '2.5rem' }}>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '54px',
-                height: '54px',
-                borderRadius: 'var(--radius-lg)',
-                backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                border: '1px solid rgba(59, 130, 246, 0.3)',
-                fontSize: '1.75rem',
-                marginBottom: '1.5rem',
-              }}
-            >
-              🎓
+        {/* Content Container (Grid-Aligned) */}
+        <div className="container hero-content-container">
+          <div className="hero-text-column">
+            {/* Eyebrow */}
+            <div className="hero-eyebrow hero-animate-eyebrow">
+              INTERNSHIPS / JOBS / CAREER GROWTH
             </div>
-            <h3 style={{ fontSize: '1.4rem', marginBottom: '0.75rem' }}>For Students</h3>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
-              Discover active internships and entry-level positions aligned with your degree, technical skills, and preferred work mode.
+
+            {/* Headline */}
+            <h1 className="hero-headline hero-animate-headline">
+              Build the next step<br />
+              of your <span className="hero-headline-accent">career.</span>
+            </h1>
+
+            {/* Supporting Text */}
+            <p className="hero-supporting-text hero-animate-supporting">
+              Discover internships and opportunities matched to your skills and goals.
             </p>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.85rem', color: 'var(--text-secondary)', fontSize: '0.925rem' }}>
-              <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
-                <span style={{ color: 'var(--accent-emerald)', fontWeight: 'bold' }}>✓</span>
-                <span>Faceted query filters by role type (internship/full-time), mode, and skills</span>
-              </li>
-              <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
-                <span style={{ color: 'var(--accent-emerald)', fontWeight: 'bold' }}>✓</span>
-                <span>Upload and manage PDF/DOCX resume documents up to 5 MB</span>
-              </li>
-              <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
-                <span style={{ color: 'var(--accent-emerald)', fontWeight: 'bold' }}>✓</span>
-                <span>Direct application submissions with optional custom cover letters</span>
-              </li>
-              <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
-                <span style={{ color: 'var(--accent-emerald)', fontWeight: 'bold' }}>✓</span>
-                <span>Track application progression across 7 distinct pipeline stages</span>
-              </li>
-            </ul>
-            <div style={{ marginTop: '2rem' }}>
-              <Link to="/opportunities" className="btn btn-outline" style={{ width: '100%', padding: '0.65rem' }}>
-                Browse Available Opportunities &rarr;
+
+            {/* CTA Group */}
+            <div className="hero-cta-group hero-animate-cta">
+              <Link
+                to="/opportunities"
+                className="btn btn-primary hero-btn-primary"
+              >
+                Explore Opportunities &rarr;
               </Link>
-            </div>
-          </div>
 
-          {/* Recruiter Pillar Card */}
-          <div className="card card-hover" style={{ padding: '2.5rem' }}>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '54px',
-                height: '54px',
-                borderRadius: 'var(--radius-lg)',
-                backgroundColor: 'rgba(139, 92, 246, 0.15)',
-                border: '1px solid rgba(139, 92, 246, 0.3)',
-                fontSize: '1.75rem',
-                marginBottom: '1.5rem',
-              }}
-            >
-              💼
-            </div>
-            <h3 style={{ fontSize: '1.4rem', marginBottom: '0.75rem' }}>For Recruiters & Companies</h3>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
-              Publish career opportunities, inspect qualified student profiles, and advance candidates through an organized recruitment workflow.
-            </p>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.85rem', color: 'var(--text-secondary)', fontSize: '0.925rem' }}>
-              <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
-                <span style={{ color: 'var(--accent-purple)', fontWeight: 'bold' }}>✓</span>
-                <span>Post opportunities with compensation, requirements, and deadlines</span>
-              </li>
-              <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
-                <span style={{ color: 'var(--accent-purple)', fontWeight: 'bold' }}>✓</span>
-                <span>Review candidate education, graduation year, skills tags, and resumes</span>
-              </li>
-              <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
-                <span style={{ color: 'var(--accent-purple)', fontWeight: 'bold' }}>✓</span>
-                <span>API-driven application status updater (Applied &rarr; Selected / Rejected)</span>
-              </li>
-              <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
-                <span style={{ color: 'var(--accent-purple)', fontWeight: 'bold' }}>✓</span>
-                <span>Strict recruiter ownership boundaries and soft-deactivation control</span>
-              </li>
-            </ul>
-            <div style={{ marginTop: '2rem' }}>
-              {isAuthenticated && (user?.role === 'recruiter' || user?.role === 'admin') ? (
-                <Link to="/recruiter/opportunities/create" className="btn btn-outline" style={{ width: '100%', padding: '0.65rem' }}>
-                  Post an Opportunity &rarr;
+              {!isAuthenticated ? (
+                <Link
+                  to="/login"
+                  className="btn btn-secondary hero-btn-secondary"
+                >
+                  Sign In
+                </Link>
+              ) : user?.role === 'student' ? (
+                <Link
+                  to="/student/dashboard"
+                  className="btn btn-secondary hero-btn-secondary"
+                >
+                  Student Dashboard &rarr;
                 </Link>
               ) : (
-                <Link to="/register" className="btn btn-outline" style={{ width: '100%', padding: '0.65rem' }}>
-                  Register as Recruiter &rarr;
+                <Link
+                  to="/recruiter/dashboard"
+                  className="btn btn-secondary hero-btn-secondary"
+                >
+                  Recruiter Dashboard &rarr;
                 </Link>
               )}
             </div>
@@ -265,144 +142,399 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Recruitment Workflow Stepper Section */}
-      <section
-        className="card"
-        style={{
-          padding: '3rem 2rem',
-          marginBottom: '4rem',
-          border: '1px solid var(--border-medium)',
-        }}
-      >
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <h2 style={{ marginBottom: '0.5rem' }}>How SkillBridge Works</h2>
-          <p>A transparent 4-step workflow from discovery to candidate selection.</p>
-        </div>
-
-        <div className="grid grid-cols-4" style={{ gap: '1.5rem' }}>
-          <div style={{ textAlign: 'center' }}>
-            <div
-              style={{
-                width: '44px',
-                height: '44px',
-                borderRadius: '50%',
-                backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                color: '#60a5fa',
-                border: '1px solid rgba(59, 130, 246, 0.3)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 700,
-                marginBottom: '1rem',
-              }}
-            >
-              1
+      {/* ===================================================================
+          MAIN CONTENT BELOW HERO
+          =================================================================== */}
+      <div className="container" style={{ paddingTop: '3.5rem' }}>
+        {/* ===================================================================
+            2. OPPORTUNITY DISCOVERY (Quick Specialization Filters)
+            =================================================================== */}
+        <section
+          style={{
+            marginBottom: '4.5rem',
+            padding: '2rem 2.25rem',
+            backgroundColor: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-lg)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '1rem',
+              marginBottom: '1.25rem',
+            }}
+          >
+            <div>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.25rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
+                Explore by Specialization & Work Mode
+              </h2>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', margin: 0 }}>
+                Filter open positions by role type, working arrangement, and technical stack.
+              </p>
             </div>
-            <h4 style={{ marginBottom: '0.4rem' }}>Discover</h4>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              Filter by location, role type, work mode, and technical competencies.
-            </p>
-          </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <div
-              style={{
-                width: '44px',
-                height: '44px',
-                borderRadius: '50%',
-                backgroundColor: 'rgba(99, 102, 241, 0.15)',
-                color: '#818cf8',
-                border: '1px solid rgba(99, 102, 241, 0.3)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 700,
-                marginBottom: '1rem',
-              }}
+            <Link
+              to="/opportunities"
+              style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary-400)', textDecoration: 'none' }}
             >
-              2
-            </div>
-            <h4 style={{ marginBottom: '0.4rem' }}>Apply</h4>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              Submit with your profile resume and an optional tailored statement.
-            </p>
-          </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <div
-              style={{
-                width: '44px',
-                height: '44px',
-                borderRadius: '50%',
-                backgroundColor: 'rgba(139, 92, 246, 0.15)',
-                color: '#c084fc',
-                border: '1px solid rgba(139, 92, 246, 0.3)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 700,
-                marginBottom: '1rem',
-              }}
-            >
-              3
-            </div>
-            <h4 style={{ marginBottom: '0.4rem' }}>Review</h4>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              Recruiters evaluate candidate credentials and review candidate resumes.
-            </p>
-          </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <div
-              style={{
-                width: '44px',
-                height: '44px',
-                borderRadius: '50%',
-                backgroundColor: 'rgba(16, 185, 129, 0.15)',
-                color: '#34d399',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 700,
-                marginBottom: '1rem',
-              }}
-            >
-              4
-            </div>
-            <h4 style={{ marginBottom: '0.4rem' }}>Progress</h4>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              Track candidate status updates from initial review to final offer.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Final Action Invitation Section */}
-      <section
-        style={{
-          textAlign: 'center',
-          padding: '3rem 1.5rem',
-          borderRadius: 'var(--radius-xl)',
-          background: 'var(--gradient-brand-subtle)',
-          border: '1px solid var(--border-highlight)',
-        }}
-      >
-        <h2 style={{ marginBottom: '0.75rem' }}>Ready to Get Started?</h2>
-        <p style={{ maxWidth: '540px', margin: '0 auto 1.75rem', color: 'var(--text-secondary)' }}>
-          Create an account to browse listings, submit applications, or publish opportunities today.
-        </p>
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link to="/opportunities" className="btn btn-primary" style={{ padding: '0.75rem 1.75rem' }}>
-            View All Opportunities &rarr;
-          </Link>
-          {!isAuthenticated && (
-            <Link to="/register" className="btn btn-secondary" style={{ padding: '0.75rem 1.75rem' }}>
-              Register for Free
+              Browse all postings &rarr;
             </Link>
+          </div>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.55rem' }}>
+            <Link to="/opportunities?type=internship" className="filter-pill">
+              Internships
+            </Link>
+            <Link to="/opportunities?type=full-time" className="filter-pill">
+              Full-Time Roles
+            </Link>
+            <Link to="/opportunities?workMode=remote" className="filter-pill">
+              Remote Positions
+            </Link>
+            <Link to="/opportunities?workMode=hybrid" className="filter-pill">
+              Hybrid
+            </Link>
+            <Link to="/opportunities?search=Software" className="filter-pill">
+              Software Engineering
+            </Link>
+            <Link to="/opportunities?search=React" className="filter-pill">
+              React / Frontend
+            </Link>
+            <Link to="/opportunities?search=Node" className="filter-pill">
+              Node.js / Backend
+            </Link>
+            <Link to="/opportunities?search=Full+Stack" className="filter-pill">
+              Full Stack
+            </Link>
+          </div>
+        </section>
+
+        {/* ===================================================================
+            3. SELECTED OPPORTUNITY PREVIEWS (Live API-Backed Listings)
+            =================================================================== */}
+        <section style={{ marginBottom: '5rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-end',
+              marginBottom: '2rem',
+              flexWrap: 'wrap',
+              gap: '1rem',
+            }}
+          >
+            <div>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.35rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
+                Featured Opportunities
+              </h2>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', margin: 0 }}>
+                Recent openings published by hiring organizations on SkillBridge.
+              </p>
+            </div>
+            <Link
+              to="/opportunities"
+              style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary-400)', textDecoration: 'none' }}
+            >
+              View all opportunities ({featuredOpportunities.length}+) &rarr;
+            </Link>
+          </div>
+
+          {loadingFeatured ? (
+            <div className="grid grid-cols-3" style={{ gap: '1.5rem' }}>
+              {[1, 2, 3].map((n) => (
+                <div
+                  key={n}
+                  style={{
+                    height: '240px',
+                    backgroundColor: 'var(--bg-surface)',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: 'var(--radius-lg)',
+                    padding: '1.5rem',
+                  }}
+                />
+              ))}
+            </div>
+          ) : featuredOpportunities.length > 0 ? (
+            <div className="grid grid-cols-3" style={{ gap: '1.5rem' }}>
+              {featuredOpportunities.map((opp) => (
+                <OpportunityCard key={opp._id} opportunity={opp} />
+              ))}
+            </div>
+          ) : (
+            <div
+              style={{
+                padding: '3rem 2rem',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-lg)',
+                textAlign: 'center',
+              }}
+            >
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.25rem', fontSize: '0.925rem' }}>
+                Explore the full opportunities marketplace to discover active job and internship postings.
+              </p>
+              <Link to="/opportunities" className="btn btn-secondary" style={{ padding: '0.6rem 1.25rem' }}>
+                Go to Opportunities &rarr;
+              </Link>
+            </div>
           )}
-        </div>
-      </section>
+        </section>
+
+        {/* ===================================================================
+            4. HOW SKILLBRIDGE WORKS (Editorial 4-Stage Pathway)
+            =================================================================== */}
+        <section style={{ marginBottom: '5rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '2.75rem' }}>
+            <h2 style={{ fontSize: '1.625rem', fontWeight: 700, margin: '0 0 0.4rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
+              How SkillBridge Works
+            </h2>
+            <p style={{ maxWidth: '540px', margin: '0 auto', fontSize: '0.925rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              A transparent four-stage pathway designed to eliminate hiring friction for students and employers.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-4" style={{ gap: '1.25rem' }}>
+            <div
+              style={{
+                padding: '1.5rem',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-lg)',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '0.8rem',
+                  fontFamily: 'var(--font-mono, monospace)',
+                  color: 'var(--primary-400)',
+                  fontWeight: 700,
+                  marginBottom: '0.75rem',
+                }}
+              >
+                01 / DISCOVER
+              </div>
+              <h3 style={{ fontSize: '0.975rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--text-primary)' }}>
+                Find Matching Roles
+              </h3>
+              <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.55 }}>
+                Filter listings by role type, working arrangement, compensation, and required competencies.
+              </p>
+            </div>
+
+            <div
+              style={{
+                padding: '1.5rem',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-lg)',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '0.8rem',
+                  fontFamily: 'var(--font-mono, monospace)',
+                  color: 'var(--primary-400)',
+                  fontWeight: 700,
+                  marginBottom: '0.75rem',
+                }}
+              >
+                02 / APPLY
+              </div>
+              <h3 style={{ fontSize: '0.975rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--text-primary)' }}>
+                One-Click Submission
+              </h3>
+              <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.55 }}>
+                Submit verified student profile data and resume documents with an optional custom statement.
+              </p>
+            </div>
+
+            <div
+              style={{
+                padding: '1.5rem',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-lg)',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '0.8rem',
+                  fontFamily: 'var(--font-mono, monospace)',
+                  color: 'var(--primary-400)',
+                  fontWeight: 700,
+                  marginBottom: '0.75rem',
+                }}
+              >
+                03 / SCREEN
+              </div>
+              <h3 style={{ fontSize: '0.975rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--text-primary)' }}>
+                Recruiter Evaluation
+              </h3>
+              <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.55 }}>
+                Hiring managers review candidate academic credentials, skills, and download attached resumes directly.
+              </p>
+            </div>
+
+            <div
+              style={{
+                padding: '1.5rem',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-lg)',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '0.8rem',
+                  fontFamily: 'var(--font-mono, monospace)',
+                  color: 'var(--primary-400)',
+                  fontWeight: 700,
+                  marginBottom: '0.75rem',
+                }}
+              >
+                04 / PROGRESS
+              </div>
+              <h3 style={{ fontSize: '0.975rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--text-primary)' }}>
+                Pipeline Tracking
+              </h3>
+              <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.55 }}>
+                Monitor application progression through screening, interview rounds, and decision status.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ===================================================================
+            5. DUAL-SIDED VALUE PROPOSITION (Students vs. Employers)
+            =================================================================== */}
+        <section
+          style={{
+            marginBottom: '5rem',
+            padding: '2.75rem 2.5rem',
+            backgroundColor: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-lg)',
+          }}
+        >
+          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+            <h2 style={{ fontSize: '1.625rem', fontWeight: 700, margin: '0 0 0.4rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
+              Designed for Both Sides of Technical Placement
+            </h2>
+            <p style={{ maxWidth: '580px', margin: '0 auto', fontSize: '0.925rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              Tailored tools for students launching their careers and recruiters building technical teams.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2" style={{ gap: '2.5rem' }}>
+            {/* For Students */}
+            <div style={{ borderRight: '1px solid var(--border-subtle)', paddingRight: '2rem' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--primary-400)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem' }}>
+                Candidates
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.65rem', color: 'var(--text-primary)' }}>
+                For Students & Graduates
+              </h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
+                Create a structured technical profile, upload your resume, and apply to vetted roles without repetitive manual entry.
+              </p>
+
+              <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <span style={{ color: 'var(--primary-400)', fontWeight: 700 }}>—</span>
+                  <span>Faceted search by role type, work arrangement, and technical stack</span>
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <span style={{ color: 'var(--primary-400)', fontWeight: 700 }}>—</span>
+                  <span>Centralized PDF/DOCX resume management with single-click submission</span>
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <span style={{ color: 'var(--primary-400)', fontWeight: 700 }}>—</span>
+                  <span>Transparent 6-stage tracking across screening, interview, and offers</span>
+                </li>
+              </ul>
+
+              <div style={{ marginTop: '1.75rem' }}>
+                <Link to="/opportunities" className="btn btn-outline" style={{ padding: '0.55rem 1.15rem', fontSize: '0.85rem' }}>
+                  Explore Student Roles &rarr;
+                </Link>
+              </div>
+            </div>
+
+            {/* For Recruiters */}
+            <div style={{ paddingLeft: '0.5rem' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--primary-400)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem' }}>
+                Employers
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.65rem', color: 'var(--text-primary)' }}>
+                For Recruiters & Companies
+              </h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
+                Publish technical listings, review qualified applicants with standardized criteria, and coordinate hiring stages.
+              </p>
+
+              <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <span style={{ color: 'var(--primary-400)', fontWeight: 700 }}>—</span>
+                  <span>Publish postings with clear compensation, qualifications, and deadlines</span>
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <span style={{ color: 'var(--primary-400)', fontWeight: 700 }}>—</span>
+                  <span>Inspect candidate education, graduation year, skills, and download resumes</span>
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <span style={{ color: 'var(--primary-400)', fontWeight: 700 }}>—</span>
+                  <span>One-click stage progression from Applied to Interview and Selected</span>
+                </li>
+              </ul>
+
+              <div style={{ marginTop: '1.75rem' }}>
+                {isAuthenticated && (user?.role === 'recruiter' || user?.role === 'admin') ? (
+                  <Link to="/recruiter/opportunities/create" className="btn btn-outline" style={{ padding: '0.55rem 1.15rem', fontSize: '0.85rem' }}>
+                    Post an Opportunity &rarr;
+                  </Link>
+                ) : (
+                  <Link to="/register" className="btn btn-outline" style={{ padding: '0.55rem 1.15rem', fontSize: '0.85rem' }}>
+                    Register as Recruiter &rarr;
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ===================================================================
+            6. FINAL CALL TO ACTION (Calm, Confident)
+            =================================================================== */}
+        <section
+          style={{
+            textAlign: 'center',
+            padding: '3.5rem 2rem',
+            backgroundColor: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-lg)',
+          }}
+        >
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 700, margin: '0 0 0.5rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
+            Ready to Build Your Career Pathway?
+          </h2>
+          <p style={{ maxWidth: '520px', margin: '0 auto 1.75rem', color: 'var(--text-secondary)', fontSize: '0.925rem', lineHeight: 1.5 }}>
+            Create an account to explore matching opportunities, manage your credentials, or recruit emerging technical talent.
+          </p>
+          <div style={{ display: 'flex', gap: '0.85rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link to="/opportunities" className="btn btn-primary" style={{ padding: '0.65rem 1.35rem', fontSize: '0.875rem' }}>
+              View All Opportunities &rarr;
+            </Link>
+            {!isAuthenticated && (
+              <Link to="/register" className="btn btn-secondary" style={{ padding: '0.65rem 1.35rem', fontSize: '0.875rem' }}>
+                Create Free Account
+              </Link>
+            )}
+          </div>
+        </section>
+      </div>
     </div>
   );
 };

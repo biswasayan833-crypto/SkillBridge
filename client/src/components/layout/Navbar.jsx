@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -6,6 +6,15 @@ const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -18,28 +27,20 @@ const Navbar = () => {
   };
 
   return (
-    <header className="navbar">
+    <header className={`navbar ${scrolled ? 'navbar-scrolled' : ''}`}>
       <div className="container nav-container">
         <Link to="/" className="nav-brand" onClick={closeMobileMenu}>
-          <span
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '32px',
-              height: '32px',
-              borderRadius: 'var(--radius-md)',
-              background: 'var(--gradient-brand)',
-              boxShadow: '0 0 16px rgba(99, 102, 241, 0.4)',
-              fontSize: '1.1rem',
-            }}
-          >
-            🌉
+          <span className="nav-brand-mark">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 19L20 19" />
+              <path d="M4 15C7 9 17 9 20 15" />
+              <path d="M12 4L12 12" />
+            </svg>
           </span>
-          <span className="nav-brand-gradient">SkillBridge</span>
+          <span className="nav-brand-text">SkillBridge</span>
         </Link>
 
-        {/* Mobile menu toggle button */}
+        {/* Mobile menu toggle */}
         <button
           className="nav-mobile-toggle"
           onClick={() => setMobileMenuOpen((prev) => !prev)}
@@ -108,25 +109,20 @@ const Navbar = () => {
                   </>
                 )}
 
-                <li style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginLeft: '0.5rem' }}>
+                <li style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginLeft: '0.5rem' }}>
                   <span
                     className="badge badge-info"
                     style={{
                       fontSize: '0.75rem',
-                      padding: '0.3rem 0.65rem',
-                      textTransform: 'capitalize',
-                      letterSpacing: '0.02em',
+                      padding: '0.25rem 0.6rem',
+                      letterSpacing: '0.01em',
                     }}
                   >
-                    👤 {user.name} ({user.role})
+                    {user.name} ({user.role})
                   </span>
                   <button
                     onClick={handleLogout}
                     className="btn btn-secondary btn-sm"
-                    style={{
-                      border: '1px solid var(--border-medium)',
-                      padding: '0.35rem 0.75rem',
-                    }}
                   >
                     Logout
                   </button>
@@ -145,7 +141,7 @@ const Navbar = () => {
                     to="/register"
                     className="btn btn-primary btn-sm"
                     onClick={closeMobileMenu}
-                    style={{ color: '#fff', padding: '0.45rem 1rem' }}
+                    style={{ color: '#fff' }}
                   >
                     Get Started
                   </NavLink>

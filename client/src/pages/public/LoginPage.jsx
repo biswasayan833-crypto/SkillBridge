@@ -62,29 +62,33 @@ const LoginPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: '440px', margin: '3rem auto 4rem' }}>
-      <div className="card" style={{ padding: '2.5rem 2rem' }}>
+    <div style={{ maxWidth: '420px', margin: '3.5rem auto 4.5rem' }}>
+      <div className="card" style={{ padding: '2.5rem 2.25rem', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          {/* Minimalist Geometric Emblem */}
           <div
             style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: 'var(--radius-lg)',
-              background: 'linear-gradient(135deg, var(--primary-600) 0%, #06b6d4 100%)',
+              width: '40px',
+              height: '40px',
+              borderRadius: 'var(--radius-md)',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              border: '1px solid rgba(59, 130, 246, 0.25)',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '1.4rem',
-              boxShadow: 'var(--shadow-glow)',
               marginBottom: '1rem',
             }}
           >
-            ⚡
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-400)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+              <polyline points="10 17 15 12 10 7" />
+              <line x1="15" y1="12" x2="3" y2="12" />
+            </svg>
           </div>
-          <h2 style={{ margin: '0 0 0.5rem', fontSize: '1.65rem', fontWeight: 800 }}>
+          <h2 style={{ margin: '0 0 0.35rem', fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
             Welcome Back
           </h2>
-          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.925rem' }}>
+          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
             Sign in to access your SkillBridge dashboard
           </p>
         </div>
@@ -98,13 +102,12 @@ const LoginPage = () => {
               borderRadius: 'var(--radius-md)',
               padding: '0.75rem 1rem',
               marginBottom: '1.5rem',
-              fontSize: '0.875rem',
+              fontSize: '0.85rem',
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
             }}
           >
-            <span>⚠️</span>
             <span>{formError}</span>
           </div>
         )}
@@ -117,7 +120,7 @@ const LoginPage = () => {
                 display: 'block',
                 marginBottom: '0.4rem',
                 fontWeight: 600,
-                fontSize: '0.875rem',
+                fontSize: '0.825rem',
                 color: 'var(--text-secondary)',
               }}
             >
@@ -144,7 +147,7 @@ const LoginPage = () => {
                 display: 'block',
                 marginBottom: '0.4rem',
                 fontWeight: 600,
-                fontSize: '0.875rem',
+                fontSize: '0.825rem',
                 color: 'var(--text-secondary)',
               }}
             >
@@ -170,9 +173,9 @@ const LoginPage = () => {
             disabled={isSubmitting}
             style={{
               width: '100%',
-              padding: '0.8rem',
-              fontSize: '0.975rem',
-              fontWeight: 700,
+              padding: '0.75rem',
+              fontSize: '0.925rem',
+              fontWeight: 600,
               cursor: isSubmitting ? 'not-allowed' : 'pointer',
             }}
           >
@@ -188,7 +191,7 @@ const LoginPage = () => {
             borderTop: '1px solid var(--border-subtle)',
           }}
         >
-          <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+          <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
             Don&apos;t have an account?{' '}
             <Link
               to="/register"

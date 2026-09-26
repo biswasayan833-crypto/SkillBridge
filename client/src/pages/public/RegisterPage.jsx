@@ -90,29 +90,33 @@ const RegisterPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: '500px', margin: '3rem auto 4rem' }}>
-      <div className="card" style={{ padding: '2.5rem 2rem' }}>
+    <div style={{ maxWidth: '460px', margin: '3rem auto 4.5rem' }}>
+      <div className="card" style={{ padding: '2.5rem 2.25rem', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div
             style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: 'var(--radius-lg)',
-              background: 'linear-gradient(135deg, var(--primary-600) 0%, #06b6d4 100%)',
+              width: '40px',
+              height: '40px',
+              borderRadius: 'var(--radius-md)',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              border: '1px solid rgba(59, 130, 246, 0.25)',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '1.4rem',
-              boxShadow: 'var(--shadow-glow)',
               marginBottom: '1rem',
             }}
           >
-            🚀
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-400)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <line x1="19" y1="8" x2="19" y2="14" />
+              <line x1="22" y1="11" x2="16" y2="11" />
+            </svg>
           </div>
-          <h2 style={{ margin: '0 0 0.5rem', fontSize: '1.65rem', fontWeight: 800 }}>
+          <h2 style={{ margin: '0 0 0.35rem', fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
             Create an Account
           </h2>
-          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.925rem' }}>
+          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
             Join SkillBridge as a Student or Recruiter
           </p>
         </div>
@@ -126,13 +130,12 @@ const RegisterPage = () => {
               borderRadius: 'var(--radius-md)',
               padding: '0.75rem 1rem',
               marginBottom: '1.5rem',
-              fontSize: '0.875rem',
+              fontSize: '0.85rem',
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
             }}
           >
-            <span>⚠️</span>
             <span>{formError}</span>
           </div>
         )}
@@ -145,11 +148,11 @@ const RegisterPage = () => {
                 display: 'block',
                 marginBottom: '0.5rem',
                 fontWeight: 600,
-                fontSize: '0.875rem',
+                fontSize: '0.825rem',
                 color: 'var(--text-secondary)',
               }}
             >
-              I want to join as:
+              Account Type:
             </label>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               <div
@@ -157,17 +160,16 @@ const RegisterPage = () => {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.75rem',
-                  padding: '0.875rem 1rem',
+                  gap: '0.65rem',
+                  padding: '0.75rem 0.875rem',
                   borderRadius: 'var(--radius-md)',
                   border: `1px solid ${
                     role === 'student' ? 'var(--primary-500)' : 'var(--border-subtle)'
                   }`,
                   backgroundColor:
-                    role === 'student' ? 'rgba(99, 102, 241, 0.15)' : 'var(--bg-overlay)',
+                    role === 'student' ? 'rgba(59, 130, 246, 0.1)' : 'var(--bg-card)',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  boxShadow: role === 'student' ? 'var(--shadow-glow)' : 'none',
+                  transition: 'all 0.15s ease',
                 }}
               >
                 <input
@@ -179,8 +181,8 @@ const RegisterPage = () => {
                   style={{ accentColor: 'var(--primary-500)' }}
                 />
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.925rem', color: 'var(--text-primary)' }}>
-                    🎓 Student
+                  <div style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-primary)' }}>
+                    Student
                   </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Apply to roles</div>
                 </div>
@@ -191,17 +193,16 @@ const RegisterPage = () => {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.75rem',
-                  padding: '0.875rem 1rem',
+                  gap: '0.65rem',
+                  padding: '0.75rem 0.875rem',
                   borderRadius: 'var(--radius-md)',
                   border: `1px solid ${
                     role === 'recruiter' ? 'var(--primary-500)' : 'var(--border-subtle)'
                   }`,
                   backgroundColor:
-                    role === 'recruiter' ? 'rgba(99, 102, 241, 0.15)' : 'var(--bg-overlay)',
+                    role === 'recruiter' ? 'rgba(59, 130, 246, 0.1)' : 'var(--bg-card)',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  boxShadow: role === 'recruiter' ? 'var(--shadow-glow)' : 'none',
+                  transition: 'all 0.15s ease',
                 }}
               >
                 <input
@@ -213,8 +214,8 @@ const RegisterPage = () => {
                   style={{ accentColor: 'var(--primary-500)' }}
                 />
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.925rem', color: 'var(--text-primary)' }}>
-                    💼 Recruiter
+                  <div style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-primary)' }}>
+                    Recruiter
                   </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Post & hire</div>
                 </div>
@@ -230,7 +231,7 @@ const RegisterPage = () => {
                 display: 'block',
                 marginBottom: '0.4rem',
                 fontWeight: 600,
-                fontSize: '0.875rem',
+                fontSize: '0.825rem',
                 color: 'var(--text-secondary)',
               }}
             >
@@ -242,7 +243,7 @@ const RegisterPage = () => {
               type="text"
               required
               autoComplete="name"
-              placeholder="Ayan Biswas"
+              placeholder="e.g. Alex Morgan"
               value={name}
               onChange={handleChange}
               className="form-control"
@@ -258,7 +259,7 @@ const RegisterPage = () => {
                 display: 'block',
                 marginBottom: '0.4rem',
                 fontWeight: 600,
-                fontSize: '0.875rem',
+                fontSize: '0.825rem',
                 color: 'var(--text-secondary)',
               }}
             >
@@ -286,7 +287,7 @@ const RegisterPage = () => {
                 display: 'block',
                 marginBottom: '0.4rem',
                 fontWeight: 600,
-                fontSize: '0.875rem',
+                fontSize: '0.825rem',
                 color: 'var(--text-secondary)',
               }}
             >
@@ -314,7 +315,7 @@ const RegisterPage = () => {
                 display: 'block',
                 marginBottom: '0.4rem',
                 fontWeight: 600,
-                fontSize: '0.875rem',
+                fontSize: '0.825rem',
                 color: 'var(--text-secondary)',
               }}
             >
@@ -340,9 +341,9 @@ const RegisterPage = () => {
             disabled={isSubmitting}
             style={{
               width: '100%',
-              padding: '0.8rem',
-              fontSize: '0.975rem',
-              fontWeight: 700,
+              padding: '0.75rem',
+              fontSize: '0.925rem',
+              fontWeight: 600,
               cursor: isSubmitting ? 'not-allowed' : 'pointer',
             }}
           >
@@ -358,7 +359,7 @@ const RegisterPage = () => {
             borderTop: '1px solid var(--border-subtle)',
           }}
         >
-          <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+          <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
             Already have an account?{' '}
             <Link
               to="/login"

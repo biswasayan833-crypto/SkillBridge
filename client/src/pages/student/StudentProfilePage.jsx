@@ -60,11 +60,9 @@ const StudentProfilePage = () => {
     }
   };
 
-  // Fetch initial profile
   useEffect(() => {
     fetchProfile();
   }, []);
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -77,7 +75,6 @@ const StudentProfilePage = () => {
     setStatusMessage({ type: '', text: '' });
 
     try {
-      // Split skills by commas and trim
       const skillsArray = profile.skills
         .split(',')
         .map((s) => s.trim())
@@ -102,7 +99,6 @@ const StudentProfilePage = () => {
           type: 'success',
           text: 'Profile updated successfully!',
         });
-        // Update user state in AuthContext if name changed
         if (refreshUser) {
           await refreshUser();
         }
@@ -124,7 +120,6 @@ const StudentProfilePage = () => {
       return;
     }
 
-    // Client-side validations
     const allowedExtensions = ['.pdf', '.docx'];
     const ext = '.' + file.name.split('.').pop().toLowerCase();
     if (!allowedExtensions.includes(ext)) {
@@ -173,7 +168,6 @@ const StudentProfilePage = () => {
           resume: res.resume,
         }));
         setSelectedFile(null);
-        // Clear file input
         const fileInput = document.getElementById('resume-file-input');
         if (fileInput) fileInput.value = '';
 
@@ -243,9 +237,8 @@ const StudentProfilePage = () => {
 
   if (loading) {
     return (
-      <div style={{ maxWidth: '850px', margin: '3rem auto', textAlign: 'center' }}>
-        <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>⏳</div>
-        <p style={{ color: 'var(--text-secondary)' }}>Loading profile information...</p>
+      <div style={{ maxWidth: '860px', margin: '3rem auto', textAlign: 'center' }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem' }}>Loading profile information...</p>
       </div>
     );
   }
@@ -253,7 +246,7 @@ const StudentProfilePage = () => {
   const hasResume = profile.resume && profile.resume.filename;
 
   return (
-    <div style={{ maxWidth: '900px', margin: '1.5rem auto 3rem' }}>
+    <div style={{ maxWidth: '860px', margin: '1.5rem auto 3.5rem' }}>
       {/* Header */}
       <div
         style={{
@@ -266,14 +259,14 @@ const StudentProfilePage = () => {
         }}
       >
         <div>
-          <h1 style={{ fontSize: '2.25rem', fontWeight: 800, margin: '0 0 0.25rem' }}>
+          <h1 style={{ fontSize: '1.875rem', fontWeight: 700, margin: '0 0 0.35rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
             Student Profile & Resume
           </h1>
-          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-            Manage your personal details, academic background, skills, and resume document.
+          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.925rem' }}>
+            Manage your personal background, education credentials, skills, and verified resume.
           </p>
         </div>
-        <Link to="/student/applications" className="btn btn-secondary">
+        <Link to="/student/applications" className="btn btn-secondary" style={{ padding: '0.55rem 1.1rem', fontSize: '0.875rem' }}>
           &larr; My Applications
         </Link>
       </div>
@@ -290,13 +283,12 @@ const StudentProfilePage = () => {
             borderRadius: 'var(--radius-md)',
             padding: '0.875rem 1.25rem',
             marginBottom: '1.75rem',
-            fontSize: '0.925rem',
+            fontSize: '0.875rem',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
           }}
         >
-          <span>{statusMessage.type === 'success' ? '✅' : '⚠️'}</span>
           <span>{statusMessage.text}</span>
         </div>
       )}
@@ -305,21 +297,24 @@ const StudentProfilePage = () => {
       <div className="card" style={{ marginBottom: '2rem', padding: '2rem' }}>
         <h3
           style={{
-            fontSize: '1.25rem',
-            fontWeight: 700,
+            fontSize: '0.95rem',
+            fontWeight: 600,
+            color: 'var(--text-secondary)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.04em',
             borderBottom: '1px solid var(--border-subtle)',
             paddingBottom: '0.75rem',
             marginBottom: '1.5rem',
           }}
         >
-          📄 Resume Document Hub
+          Resume Document Hub
         </h3>
 
         {hasResume ? (
           <div
             style={{
               padding: '1.25rem 1.5rem',
-              backgroundColor: 'var(--bg-overlay)',
+              backgroundColor: 'var(--bg-card)',
               borderRadius: 'var(--radius-md)',
               border: '1px solid var(--border-subtle)',
               marginBottom: '1.5rem',
@@ -331,24 +326,23 @@ const StudentProfilePage = () => {
             }}
           >
             <div>
-              <div style={{ fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '1rem' }}>
-                <span style={{ fontSize: '1.35rem' }}>📄</span>
-                <span>{profile.resume.filename}</span>
+              <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.95rem' }}>
+                {profile.resume.filename}
               </div>
               {profile.resume.uploadedAt && (
-                <p style={{ margin: '0.35rem 0 0 0', fontSize: '0.825rem', color: 'var(--text-muted)' }}>
+                <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                   Uploaded on {new Date(profile.resume.uploadedAt).toLocaleDateString()} at{' '}
                   {new Date(profile.resume.uploadedAt).toLocaleTimeString()}
                 </p>
               )}
             </div>
 
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', gap: '0.65rem' }}>
               <button
                 type="button"
                 className="btn btn-outline"
                 onClick={handleDownloadResume}
-                style={{ padding: '0.45rem 1rem', fontSize: '0.875rem' }}
+                style={{ padding: '0.4rem 0.9rem', fontSize: '0.825rem' }}
               >
                 Download
               </button>
@@ -356,8 +350,8 @@ const StudentProfilePage = () => {
                 type="button"
                 className="btn btn-secondary"
                 style={{
-                  padding: '0.45rem 1rem',
-                  fontSize: '0.875rem',
+                  padding: '0.4rem 0.9rem',
+                  fontSize: '0.825rem',
                   color: 'var(--danger-text)',
                   borderColor: 'var(--danger-border)',
                 }}
@@ -372,7 +366,7 @@ const StudentProfilePage = () => {
           <div
             style={{
               padding: '2rem',
-              backgroundColor: 'var(--bg-overlay)',
+              backgroundColor: 'var(--bg-card)',
               borderRadius: 'var(--radius-md)',
               border: '1px dashed var(--border-subtle)',
               marginBottom: '1.5rem',
@@ -380,8 +374,7 @@ const StudentProfilePage = () => {
               color: 'var(--text-secondary)',
             }}
           >
-            <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📁</div>
-            <p style={{ margin: 0, fontSize: '0.925rem' }}>
+            <p style={{ margin: 0, fontSize: '0.875rem' }}>
               No resume uploaded yet. Attach your PDF or DOCX resume to easily submit applications.
             </p>
           </div>
@@ -393,7 +386,7 @@ const StudentProfilePage = () => {
               htmlFor="resume-file-input"
               style={{
                 display: 'block',
-                fontSize: '0.875rem',
+                fontSize: '0.825rem',
                 fontWeight: 600,
                 marginBottom: '0.4rem',
                 color: 'var(--text-secondary)',
@@ -407,7 +400,7 @@ const StudentProfilePage = () => {
               accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               onChange={handleFileChange}
               className="form-control"
-              style={{ width: '100%', padding: '0.5rem' }}
+              style={{ width: '100%', padding: '0.45rem' }}
             />
           </div>
 
@@ -415,7 +408,7 @@ const StudentProfilePage = () => {
             type="submit"
             className="btn btn-primary"
             disabled={!selectedFile || uploadingResume}
-            style={{ padding: '0.65rem 1.25rem', fontSize: '0.925rem' }}
+            style={{ padding: '0.6rem 1.2rem', fontSize: '0.875rem' }}
           >
             {uploadingResume ? 'Uploading...' : hasResume ? 'Replace Resume' : 'Upload Resume'}
           </button>
@@ -426,21 +419,24 @@ const StudentProfilePage = () => {
       <div className="card" style={{ padding: '2rem' }}>
         <h3
           style={{
-            fontSize: '1.25rem',
-            fontWeight: 700,
+            fontSize: '0.95rem',
+            fontWeight: 600,
+            color: 'var(--text-secondary)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.04em',
             borderBottom: '1px solid var(--border-subtle)',
             paddingBottom: '0.75rem',
             marginBottom: '1.5rem',
           }}
         >
-          👤 Personal & Academic Profile
+          Personal & Academic Credentials
         </h3>
 
         <form onSubmit={handleProfileSubmit}>
-          {/* Readonly Account Details */}
+          {/* Identity */}
           <div className="grid grid-cols-2" style={{ gap: '1.25rem', marginBottom: '1.25rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
                 Full Name *
               </label>
               <input
@@ -454,7 +450,7 @@ const StudentProfilePage = () => {
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
                 Email Address (Account ID)
               </label>
               <input
@@ -473,7 +469,7 @@ const StudentProfilePage = () => {
 
           <div className="grid grid-cols-2" style={{ gap: '1.25rem', marginBottom: '1.25rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
                 Phone Number
               </label>
               <input
@@ -487,7 +483,7 @@ const StudentProfilePage = () => {
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
                 Location / City
               </label>
               <input
@@ -505,7 +501,7 @@ const StudentProfilePage = () => {
           {/* Academic Background */}
           <div className="grid grid-cols-3" style={{ gap: '1.25rem', marginBottom: '1.25rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
                 College / University
               </label>
               <input
@@ -519,7 +515,7 @@ const StudentProfilePage = () => {
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
                 Degree / Major
               </label>
               <input
@@ -533,7 +529,7 @@ const StudentProfilePage = () => {
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
                 Graduation Year
               </label>
               <input
@@ -552,13 +548,13 @@ const StudentProfilePage = () => {
 
           {/* Bio */}
           <div style={{ marginBottom: '1.25rem' }}>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
               Bio / Summary
             </label>
             <textarea
               name="bio"
               rows={3}
-              placeholder="Tell recruiters about your background, career goals, and interests..."
+              placeholder="Tell recruiters about your background, career interests, and technical focus..."
               value={profile.bio}
               onChange={handleInputChange}
               className="form-control"
@@ -568,7 +564,7 @@ const StudentProfilePage = () => {
 
           {/* Skills */}
           <div style={{ marginBottom: '1.25rem' }}>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
               Skills (comma separated)
             </label>
             <input
@@ -585,7 +581,7 @@ const StudentProfilePage = () => {
           {/* Social / Portfolio Links */}
           <div className="grid grid-cols-2" style={{ gap: '1.25rem', marginBottom: '2rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
                 GitHub Profile URL
               </label>
               <input
@@ -599,7 +595,7 @@ const StudentProfilePage = () => {
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--text-secondary)' }}>
                 LinkedIn Profile URL
               </label>
               <input
@@ -619,7 +615,7 @@ const StudentProfilePage = () => {
               type="submit"
               className="btn btn-primary"
               disabled={savingProfile}
-              style={{ minWidth: '170px', padding: '0.7rem 1.4rem' }}
+              style={{ minWidth: '170px', padding: '0.65rem 1.35rem', fontSize: '0.875rem' }}
             >
               {savingProfile ? 'Saving Changes...' : 'Save Profile Changes'}
             </button>

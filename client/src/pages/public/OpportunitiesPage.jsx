@@ -98,22 +98,23 @@ const OpportunitiesPage = () => {
   return (
     <div style={{ padding: '0.5rem 0 3rem' }}>
       {/* Page Header */}
-      <div style={{ marginBottom: '2.5rem' }}>
-        <h1 style={{ fontSize: '2.4rem', fontWeight: 800, marginBottom: '0.5rem', letterSpacing: '-0.03em' }}>
+      <div style={{ marginBottom: '2rem' }}>
+        <h1 style={{ fontSize: '2.1rem', fontWeight: 700, marginBottom: '0.4rem', letterSpacing: '-0.03em' }}>
           Explore Opportunities
         </h1>
-        <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1.05rem' }}>
-          Filter internships and full-time positions across active organizations.
+        <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.95rem' }}>
+          Discover and apply to active internships and entry-level positions.
         </p>
       </div>
 
       {/* Filter and Search Panel */}
       <div
-        className="card"
         style={{
           marginBottom: '2rem',
-          padding: '1.75rem',
-          border: '1px solid var(--border-medium)',
+          padding: '1.5rem',
+          backgroundColor: 'var(--bg-surface)',
+          border: '1px solid var(--border-subtle)',
+          borderRadius: 'var(--radius-xl)',
         }}
       >
         {/* Row 1: Search, Type, WorkMode */}
@@ -214,8 +215,8 @@ const OpportunitiesPage = () => {
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="btn btn-secondary"
-                style={{ padding: '0.65rem 1rem', fontSize: '0.875rem' }}
+                className="btn btn-secondary btn-sm"
+                style={{ padding: '0.6rem 0.95rem' }}
               >
                 Reset
               </button>
@@ -225,8 +226,8 @@ const OpportunitiesPage = () => {
       </div>
 
       {/* Results Header Metadata */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <p style={{ margin: 0, fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+        <p style={{ margin: 0, fontWeight: 500, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
           {loading ? (
             'Searching opportunities...'
           ) : (
@@ -246,11 +247,12 @@ const OpportunitiesPage = () => {
             color: 'var(--danger-text)',
             border: '1px solid var(--danger-border)',
             borderRadius: 'var(--radius-md)',
-            padding: '1rem',
+            padding: '0.85rem 1.15rem',
             marginBottom: '1.5rem',
+            fontSize: '0.875rem',
           }}
         >
-          ❌ {errorMessage}
+          {errorMessage}
         </div>
       )}
 
@@ -260,34 +262,28 @@ const OpportunitiesPage = () => {
           {[1, 2, 3, 4, 5, 6].map((n) => (
             <div
               key={n}
-              className="card skeleton"
               style={{
-                height: '260px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
+                height: '220px',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-xl)',
               }}
-            >
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.05)', marginBottom: '1rem' }} />
-              <div style={{ width: '60%', height: '14px', borderRadius: '4px', backgroundColor: 'rgba(255,255,255,0.05)', marginBottom: '0.5rem' }} />
-              <div style={{ width: '40%', height: '10px', borderRadius: '4px', backgroundColor: 'rgba(255,255,255,0.05)' }} />
-            </div>
+            />
           ))}
         </div>
       ) : opportunities.length === 0 ? (
         /* Empty State */
         <div
-          className="card"
           style={{
             textAlign: 'center',
-            padding: '4rem 2rem',
-            border: '1px dashed var(--border-medium)',
+            padding: '3.5rem 2rem',
+            backgroundColor: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-xl)',
           }}
         >
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
-          <h3 style={{ marginBottom: '0.5rem' }}>No Opportunities Found</h3>
-          <p style={{ maxWidth: '480px', margin: '0 auto 1.5rem', color: 'var(--text-secondary)' }}>
+          <h3 style={{ marginBottom: '0.5rem', fontSize: '1.15rem' }}>No Opportunities Found</h3>
+          <p style={{ maxWidth: '440px', margin: '0 auto 1.5rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
             We couldn&apos;t find any opportunities matching your active query. Try broadening your criteria or reset your filters.
           </p>
           {hasActiveFilters && (

@@ -56,7 +56,6 @@ const ApplicantsPage = () => {
           type: 'success',
           text: `Candidate status updated to "${newStatus}".`,
         });
-        // Update local applicant in state
         setApplicants((prev) =>
           prev.map((app) =>
             app._id === applicationId
@@ -76,20 +75,20 @@ const ApplicantsPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: '1150px', margin: '1.5rem auto 3rem' }}>
+    <div style={{ maxWidth: '1150px', margin: '1.5rem auto 3.5rem' }}>
       {/* Top Navigation */}
       <div style={{ marginBottom: '1.5rem' }}>
         <Link
           to="/recruiter/opportunities"
           className="btn btn-secondary"
-          style={{ padding: '0.45rem 0.9rem', fontSize: '0.875rem' }}
+          style={{ padding: '0.45rem 0.9rem', fontSize: '0.85rem' }}
         >
           &larr; Back to My Opportunities
         </Link>
       </div>
 
       {/* Opportunity Overview Banner */}
-      <div className="card" style={{ marginBottom: '2rem', padding: '2rem' }}>
+      <div className="card" style={{ marginBottom: '2rem', padding: '1.75rem 2rem' }}>
         <div
           style={{
             display: 'flex',
@@ -102,19 +101,19 @@ const ApplicantsPage = () => {
           <div>
             <span
               style={{
-                fontSize: '0.8rem',
+                fontSize: '0.75rem',
                 color: 'var(--primary-400)',
                 textTransform: 'uppercase',
-                fontWeight: 700,
-                letterSpacing: '0.05em',
+                fontWeight: 600,
+                letterSpacing: '0.04em',
               }}
             >
               Candidate Review Pipeline
             </span>
-            <h1 style={{ fontSize: '2rem', margin: '0.25rem 0 0.5rem 0', fontWeight: 800 }}>
+            <h1 style={{ fontSize: '1.875rem', margin: '0.25rem 0 0.4rem 0', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
               {opportunityInfo?.title || 'Opportunity'}
             </h1>
-            <p style={{ margin: 0, color: 'var(--text-secondary)', fontWeight: 600 }}>
+            <p style={{ margin: 0, color: 'var(--text-secondary)', fontWeight: 500, fontSize: '0.925rem' }}>
               {opportunityInfo?.company}{' '}
               {opportunityInfo?.location && (
                 <span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>• {opportunityInfo.location}</span>
@@ -125,13 +124,13 @@ const ApplicantsPage = () => {
           <div style={{ textAlign: 'right' }}>
             <span
               style={{
-                backgroundColor: 'rgba(99, 102, 241, 0.15)',
-                color: 'var(--primary-300)',
-                border: '1px solid rgba(99, 102, 241, 0.3)',
-                fontWeight: 700,
-                fontSize: '1.15rem',
-                padding: '0.45rem 1.15rem',
-                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                color: 'var(--primary-400)',
+                border: '1px solid rgba(59, 130, 246, 0.25)',
+                fontWeight: 600,
+                fontSize: '0.925rem',
+                padding: '0.4rem 1rem',
+                borderRadius: 'var(--radius-full)',
                 display: 'inline-block',
               }}
             >
@@ -153,12 +152,12 @@ const ApplicantsPage = () => {
             borderRadius: 'var(--radius-md)',
             padding: '0.875rem 1.25rem',
             marginBottom: '1.75rem',
+            fontSize: '0.875rem',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
           }}
         >
-          <span>{statusNotice.type === 'success' ? '✅' : '⚠️'}</span>
           <span>{statusNotice.text}</span>
         </div>
       )}
@@ -172,12 +171,12 @@ const ApplicantsPage = () => {
             borderRadius: 'var(--radius-md)',
             padding: '1rem 1.25rem',
             marginBottom: '1.75rem',
+            fontSize: '0.875rem',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
           }}
         >
-          <span>⚠️</span>
           <span>{errorMessage}</span>
         </div>
       )}
@@ -185,24 +184,23 @@ const ApplicantsPage = () => {
       {/* Content */}
       {loading ? (
         <div className="card" style={{ textAlign: 'center', padding: '3.5rem 2rem' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>⏳</div>
-          <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Loading candidates...</p>
+          <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.925rem' }}>Loading candidate applications...</p>
         </div>
       ) : applicants.length === 0 ? (
         <div className="card" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👥</div>
-          <h3 style={{ marginBottom: '0.5rem', fontWeight: 700 }}>No Applicants Yet</h3>
+          <h3 style={{ marginBottom: '0.5rem', fontWeight: 600, color: 'var(--text-primary)' }}>No Applicants Yet</h3>
           <p
             style={{
               color: 'var(--text-secondary)',
-              maxWidth: '440px',
+              maxWidth: '420px',
               margin: '0 auto 1.5rem',
-              lineHeight: 1.6,
+              lineHeight: 1.5,
+              fontSize: '0.925rem',
             }}
           >
-            No candidates have submitted applications for this opportunity yet. Submissions will appear here as students apply.
+            No candidates have submitted applications for this position yet. Submissions will appear here as students apply.
           </p>
-          <Link to="/recruiter/opportunities" className="btn btn-secondary">
+          <Link to="/recruiter/opportunities" className="btn btn-secondary" style={{ padding: '0.55rem 1.2rem', fontSize: '0.875rem' }}>
             &larr; Back to Listings
           </Link>
         </div>
@@ -214,40 +212,43 @@ const ApplicantsPage = () => {
                 width: '100%',
                 borderCollapse: 'collapse',
                 textAlign: 'left',
-                fontSize: '0.9rem',
+                fontSize: '0.875rem',
               }}
             >
               <thead>
                 <tr
                   style={{
-                    backgroundColor: 'var(--bg-overlay)',
+                    backgroundColor: 'var(--bg-card)',
                     borderBottom: '1px solid var(--border-subtle)',
                   }}
                 >
-                  <th style={{ padding: '1rem 1.25rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                  <th style={{ padding: '0.875rem 1.25rem', fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Candidate
                   </th>
-                  <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                  <th style={{ padding: '0.875rem 1rem', fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Academic Background
                   </th>
-                  <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                  <th style={{ padding: '0.875rem 1rem', fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Skills & Resume
                   </th>
-                  <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                    Cover Letter
+                  <th style={{ padding: '0.875rem 1rem', fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    Statement
                   </th>
-                  <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                  <th style={{ padding: '0.875rem 1rem', fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Applied Date
                   </th>
                   <th
                     style={{
-                      padding: '1rem 1.25rem',
+                      padding: '0.875rem 1.25rem',
                       fontWeight: 600,
                       color: 'var(--text-secondary)',
-                      minWidth: '200px',
+                      fontSize: '0.75rem',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                      minWidth: '190px',
                     }}
                   >
-                    API-Driven Status
+                    Status Review
                   </th>
                 </tr>
               </thead>
@@ -266,18 +267,18 @@ const ApplicantsPage = () => {
                     >
                       {/* Candidate Name & Contact */}
                       <td style={{ padding: '1rem 1.25rem' }}>
-                        <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.95rem' }}>
+                        <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.925rem' }}>
                           {student.name || 'Anonymous Student'}
                         </div>
-                        <div style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
                           {student.email}
                         </div>
                         {student.phone && (
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.1rem' }}>
-                            📞 {student.phone}
+                          <div style={{ fontSize: '0.775rem', color: 'var(--text-muted)', marginTop: '0.1rem' }}>
+                            {student.phone}
                           </div>
                         )}
-                        <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.4rem', fontSize: '0.8rem' }}>
+                        <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.35rem', fontSize: '0.775rem' }}>
                           {student.github && (
                             <a
                               href={student.github}
@@ -302,7 +303,7 @@ const ApplicantsPage = () => {
                       </td>
 
                       {/* Academic Background */}
-                      <td style={{ padding: '1rem', fontSize: '0.875rem' }}>
+                      <td style={{ padding: '1rem', fontSize: '0.85rem' }}>
                         <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                           {student.college || 'College not specified'}
                         </div>
@@ -310,7 +311,7 @@ const ApplicantsPage = () => {
                           {student.degree || 'Degree not specified'}
                         </div>
                         {student.graduationYear && (
-                          <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.15rem' }}>
+                          <div style={{ color: 'var(--text-muted)', fontSize: '0.775rem', marginTop: '0.15rem' }}>
                             Class of {student.graduationYear}
                           </div>
                         )}
@@ -319,12 +320,12 @@ const ApplicantsPage = () => {
                       {/* Skills & Resume */}
                       <td style={{ padding: '1rem' }}>
                         {student.skills && student.skills.length > 0 && (
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginBottom: '0.5rem' }}>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', marginBottom: '0.45rem' }}>
                             {student.skills.slice(0, 3).map((skill, idx) => (
                               <span
                                 key={idx}
                                 style={{
-                                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                  backgroundColor: 'rgba(255, 255, 255, 0.06)',
                                   color: 'var(--text-secondary)',
                                   fontSize: '0.725rem',
                                   padding: '0.15rem 0.45rem',
@@ -336,7 +337,7 @@ const ApplicantsPage = () => {
                               </span>
                             ))}
                             {student.skills.length > 3 && (
-                              <span style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>
+                              <span style={{ fontSize: '0.725rem', color: 'var(--text-muted)', alignSelf: 'center' }}>
                                 +{student.skills.length - 3}
                               </span>
                             )}
@@ -349,12 +350,12 @@ const ApplicantsPage = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn btn-outline"
-                            style={{ padding: '0.25rem 0.6rem', fontSize: '0.8rem' }}
+                            style={{ padding: '0.25rem 0.6rem', fontSize: '0.775rem' }}
                           >
-                            📄 View Resume
+                            View Resume
                           </a>
                         ) : (
-                          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>No Resume</span>
+                          <span style={{ fontSize: '0.775rem', color: 'var(--text-muted)' }}>No Resume</span>
                         )}
                       </td>
 
@@ -365,32 +366,32 @@ const ApplicantsPage = () => {
                             type="button"
                             className="btn btn-secondary"
                             onClick={() => setSelectedCoverLetter({ name: student.name, text: app.coverLetter })}
-                            style={{ padding: '0.3rem 0.65rem', fontSize: '0.8rem' }}
+                            style={{ padding: '0.3rem 0.65rem', fontSize: '0.775rem' }}
                           >
                             Read Statement
                           </button>
                         ) : (
-                          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>None</span>
+                          <span style={{ fontSize: '0.775rem', color: 'var(--text-muted)' }}>None</span>
                         )}
                       </td>
 
                       {/* Applied Date */}
-                      <td style={{ padding: '1rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                      <td style={{ padding: '1rem', fontSize: '0.825rem', color: 'var(--text-secondary)' }}>
                         {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : 'N/A'}
                       </td>
 
                       {/* Status Selector */}
                       <td style={{ padding: '1rem 1.25rem' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
                           <select
                             value={app.status}
                             disabled={isUpdating}
                             onChange={(e) => handleStatusChange(app._id, e.target.value)}
                             className="form-control"
                             style={{
-                              padding: '0.45rem 0.6rem',
-                              fontSize: '0.85rem',
-                              fontWeight: 600,
+                              padding: '0.4rem 0.6rem',
+                              fontSize: '0.825rem',
+                              fontWeight: 500,
                               cursor: isUpdating ? 'wait' : 'pointer',
                               width: '100%',
                             }}
@@ -402,7 +403,7 @@ const ApplicantsPage = () => {
                             ))}
                           </select>
 
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                             <ApplicationStatusBadge status={app.status} />
                             {isUpdating && (
                               <span style={{ fontSize: '0.75rem', color: 'var(--primary-400)' }}>
@@ -431,7 +432,7 @@ const ApplicantsPage = () => {
             right: 0,
             bottom: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.75)',
-            backdropFilter: 'blur(8px)',
+            backdropFilter: 'blur(6px)',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -443,14 +444,13 @@ const ApplicantsPage = () => {
           <div
             className="card"
             style={{
-              maxWidth: '650px',
+              maxWidth: '620px',
               width: '100%',
               maxHeight: '80vh',
               overflowY: 'auto',
-              padding: '2.5rem 2rem',
+              padding: '2rem',
               position: 'relative',
-              borderColor: 'rgba(99, 102, 241, 0.4)',
-              boxShadow: 'var(--shadow-glow)',
+              borderColor: 'var(--border-default)',
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -464,17 +464,17 @@ const ApplicantsPage = () => {
                 paddingBottom: '0.875rem',
               }}
             >
-              <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700 }}>
+              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                 Statement from {selectedCoverLetter.name || 'Candidate'}
               </h3>
               <button
                 type="button"
                 onClick={() => setSelectedCoverLetter(null)}
                 className="btn btn-secondary"
-                style={{ padding: '0.25rem 0.6rem', fontSize: '0.85rem' }}
+                style={{ padding: '0.25rem 0.6rem', fontSize: '0.8rem' }}
                 aria-label="Close statement modal"
               >
-                ✕ Close
+                Close
               </button>
             </div>
 
@@ -483,8 +483,8 @@ const ApplicantsPage = () => {
                 whiteSpace: 'pre-wrap',
                 lineHeight: 1.6,
                 color: 'var(--text-secondary)',
-                fontSize: '0.95rem',
-                backgroundColor: 'var(--bg-overlay)',
+                fontSize: '0.9rem',
+                backgroundColor: 'var(--bg-card)',
                 padding: '1.25rem',
                 borderRadius: 'var(--radius-md)',
                 border: '1px solid var(--border-subtle)',

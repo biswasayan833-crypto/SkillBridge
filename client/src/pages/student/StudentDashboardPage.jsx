@@ -15,7 +15,6 @@ const StudentDashboardPage = () => {
     setLoading(true);
     setErrorMessage('');
     try {
-      // Fetch up to 100 applications to calculate accurate stats on frontend
       const res = await applicationService.getMyApplications({ limit: 100 });
       if (res.success) {
         setApplications(res.data || []);
@@ -40,70 +39,50 @@ const StudentDashboardPage = () => {
   const selectedCount = applications.filter((a) => a.status === 'Selected').length;
   const rejectedCount = applications.filter((a) => a.status === 'Rejected').length;
 
+  const activeInPipeline = appliedCount + underReviewCount + shortlistedCount + interviewCount;
+
   // Most recent 5 applications
   const recentApplications = applications.slice(0, 5);
 
-  const stats = [
-    { label: 'Total', count: totalApplications, sub: 'Submitted', color: 'var(--primary-400)' },
-    { label: 'Applied', count: appliedCount, sub: 'Initial Stage', color: '#60a5fa' },
-    { label: 'Under Review', count: underReviewCount, sub: 'Screening', color: '#fbbf24' },
-    { label: 'Shortlisted', count: shortlistedCount, sub: 'Qualified', color: '#c084fc' },
-    { label: 'Interview', count: interviewCount, sub: 'Active Round', color: '#818cf8' },
-    { label: 'Selected', count: selectedCount, sub: 'Offers', color: '#34d399' },
-    { label: 'Rejected', count: rejectedCount, sub: 'Closed', color: '#f87171' },
-  ];
-
   return (
-    <div style={{ maxWidth: '1100px', margin: '1.5rem auto 3rem' }}>
-      {/* Welcome Banner */}
+    <div style={{ paddingBottom: '3rem' }}>
+      {/* ===================================================================
+          1. HEADER & GREETING
+          =================================================================== */}
       <div
-        className="card"
         style={{
-          padding: '2.5rem',
-          marginBottom: '2rem',
-          position: 'relative',
-          overflow: 'hidden',
-          background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(17, 24, 39, 0.95) 100%)',
-          borderColor: 'rgba(99, 102, 241, 0.25)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+          gap: '1.5rem',
+          marginBottom: '2.5rem',
+          paddingBottom: '2rem',
+          borderBottom: '1px solid var(--border-subtle)',
         }}
       >
-        <div
-          style={{
-            position: 'absolute',
-            top: '-40%',
-            right: '-10%',
-            width: '350px',
-            height: '350px',
-            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)',
-            pointerEvents: 'none',
-          }}
-        />
-
-        <div style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
-          <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.3rem 0.8rem', borderRadius: 'var(--radius-full)', backgroundColor: 'rgba(99, 102, 241, 0.15)', border: '1px solid rgba(99, 102, 241, 0.3)', marginBottom: '0.75rem', fontSize: '0.8rem', fontWeight: 600, color: 'var(--primary-300)' }}>
-              🎓 Student Command Center
-            </div>
-            <h1 style={{ fontSize: '2.25rem', margin: '0.25rem 0 0.5rem 0', fontWeight: 800 }}>
-              Welcome back, <span className="gradient-text">{user?.name || 'Student'}</span>!
-            </h1>
-            <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '600px', lineHeight: 1.6 }}>
-              Monitor your application status updates, discover active internships and full-time positions, and manage your profile.
-            </p>
+        <div>
+          <div style={{ fontSize: '0.8125rem', color: 'var(--primary-400)', fontWeight: 500, marginBottom: '0.35rem' }}>
+            Student Workspace
           </div>
+          <h1 style={{ fontSize: '2rem', fontWeight: 700, margin: '0 0 0.4rem', letterSpacing: '-0.03em' }}>
+            Welcome back, {user?.name || 'Student'}
+          </h1>
+          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9375rem', maxWidth: '600px' }}>
+            Track your application stages, review interview schedules, and explore active openings.
+          </p>
+        </div>
 
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <Link to="/opportunities" className="btn btn-primary" style={{ padding: '0.7rem 1.4rem' }}>
-              Browse Opportunities &rarr;
-            </Link>
-            <Link to="/student/profile" className="btn btn-secondary" style={{ padding: '0.7rem 1.4rem' }}>
-              Profile & Resume
-            </Link>
-          </div>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <Link to="/opportunities" className="btn btn-primary">
+            Explore Openings &rarr;
+          </Link>
+          <Link to="/student/profile" className="btn btn-secondary">
+            Profile & Resume
+          </Link>
         </div>
       </div>
 
-      {/* Error Message with Retry */}
       {errorMessage && (
         <div
           style={{
@@ -111,184 +90,244 @@ const StudentDashboardPage = () => {
             color: 'var(--danger-text)',
             border: '1px solid var(--danger-border)',
             borderRadius: 'var(--radius-md)',
-            padding: '1rem 1.25rem',
+            padding: '1rem',
             marginBottom: '2rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            fontSize: '0.875rem',
           }}
         >
-          <span>⚠️ {errorMessage}</span>
-          <button
-            type="button"
-            onClick={fetchDashboardData}
-            className="btn btn-secondary"
-            style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}
-          >
-            Retry
-          </button>
+          {errorMessage}
         </div>
       )}
 
-      {/* Loading Skeleton */}
-      {loading ? (
-        <div className="card" style={{ textAlign: 'center', padding: '3.5rem 2rem', marginBottom: '2rem' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>⏳</div>
-          <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Loading your dashboard overview...</p>
-        </div>
-      ) : (
-        <>
-          {/* Application Statistics Grid */}
-          <div style={{ marginBottom: '2.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ fontSize: '1.25rem', margin: 0, fontWeight: 700 }}>
-                Application Pipeline
-              </h3>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                {totalApplications} Total Submissions
-              </span>
-            </div>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-                gap: '1rem',
-              }}
-            >
-              {stats.map((s) => (
-                <div
-                  key={s.label}
-                  className="card"
-                  style={{
-                    padding: '1.25rem 1rem',
-                    textAlign: 'center',
-                    border: '1px solid var(--border-subtle)',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: s.color, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    {s.label}
-                  </span>
-                  <p style={{ fontSize: '2rem', fontWeight: 800, color: s.color, margin: '0.4rem 0 0.15rem' }}>
-                    {s.count}
-                  </p>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    {s.sub}
-                  </span>
-                </div>
-              ))}
-            </div>
+      {/* ===================================================================
+          2. METRICS & PIPELINE OVERVIEW (Clean Horizontal Summary)
+          =================================================================== */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+          gap: '1.25rem',
+          marginBottom: '2.5rem',
+        }}
+      >
+        <div
+          style={{
+            padding: '1.25rem 1.5rem',
+            backgroundColor: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-lg)',
+          }}
+        >
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            Total Applications
           </div>
+          <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.35rem', fontFamily: 'var(--font-mono)' }}>
+            {totalApplications}
+          </div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+            Lifetime submitted
+          </div>
+        </div>
 
-          {/* Recent Applications Section */}
-          <div className="card" style={{ marginBottom: '2.5rem', padding: '1.75rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700 }}>Recent Applications</h3>
-                <p style={{ margin: '0.2rem 0 0', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                  Your latest submissions and current recruitment progression
-                </p>
-              </div>
+        <div
+          style={{
+            padding: '1.25rem 1.5rem',
+            backgroundColor: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-lg)',
+          }}
+        >
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            Active in Review
+          </div>
+          <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#60a5fa', marginTop: '0.35rem', fontFamily: 'var(--font-mono)' }}>
+            {activeInPipeline}
+          </div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+            Awaiting decision
+          </div>
+        </div>
 
-              {totalApplications > 0 && (
-                <Link
-                  to="/student/applications"
-                  style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--primary-400)', textDecoration: 'none' }}
-                >
-                  View All ({totalApplications}) &rarr;
-                </Link>
-              )}
-            </div>
+        <div
+          style={{
+            padding: '1.25rem 1.5rem',
+            backgroundColor: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-lg)',
+          }}
+        >
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            Interviews
+          </div>
+          <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#a78bfa', marginTop: '0.35rem', fontFamily: 'var(--font-mono)' }}>
+            {interviewCount}
+          </div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+            Active interview rounds
+          </div>
+        </div>
 
-            {totalApplications === 0 ? (
-              /* Empty State */
-              <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
-                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📄</div>
-                <h4 style={{ marginBottom: '0.5rem', fontWeight: 700 }}>No Applications Submitted Yet</h4>
-                <p style={{ color: 'var(--text-secondary)', maxWidth: '440px', margin: '0 auto 1.5rem', fontSize: '0.925rem', lineHeight: 1.6 }}>
-                  Explore active opportunities tailored to your degree and skills, and apply with your uploaded resume.
-                </p>
-                <Link to="/opportunities" className="btn btn-primary" style={{ padding: '0.6rem 1.3rem' }}>
-                  Explore Opportunities
-                </Link>
-              </div>
-            ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-overlay)' }}>
-                      <th style={{ padding: '0.875rem 1rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Opportunity & Company</th>
-                      <th style={{ padding: '0.875rem 1rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Applied On</th>
-                      <th style={{ padding: '0.875rem 1rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Status</th>
-                      <th style={{ padding: '0.875rem 1rem', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'right' }}>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentApplications.map((app) => {
-                      const opp = app.opportunity || {};
-                      return (
-                        <tr
-                          key={app._id}
-                          style={{
-                            borderBottom: '1px solid var(--border-subtle)',
-                            transition: 'background-color 0.15s ease',
-                          }}
-                        >
-                          <td style={{ padding: '1rem' }}>
-                            <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.95rem' }}>
-                              {opp.title || 'Opportunity'}
-                            </div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                              {opp.company || 'Company'} {opp.location && `• ${opp.location}`}
-                            </div>
-                          </td>
+        <div
+          style={{
+            padding: '1.25rem 1.5rem',
+            backgroundColor: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-lg)',
+          }}
+        >
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            Offers Selected
+          </div>
+          <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#34d399', marginTop: '0.35rem', fontFamily: 'var(--font-mono)' }}>
+            {selectedCount}
+          </div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+            Offers extended
+          </div>
+        </div>
+      </div>
 
-                          <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>
-                            {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : 'N/A'}
-                          </td>
-
-                          <td style={{ padding: '1rem' }}>
-                            <ApplicationStatusBadge status={app.status} />
-                          </td>
-
-                          <td style={{ padding: '1rem', textAlign: 'right' }}>
-                            <Link
-                              to={`/student/applications/${app._id}`}
-                              className="btn btn-outline"
-                              style={{ padding: '0.35rem 0.75rem', fontSize: '0.825rem' }}
-                            >
-                              View Details
-                            </Link>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+      {/* ===================================================================
+          3. MAIN CONTENT: RECENT APPLICATIONS & PIPELINE BREAKDOWN
+          =================================================================== */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)',
+          gap: '2rem',
+          alignItems: 'start',
+        }}
+      >
+        {/* Left: Recent Applications Table */}
+        <div
+          style={{
+            backgroundColor: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-xl)',
+            padding: '1.75rem',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+            <h2 style={{ fontSize: '1.15rem', margin: 0 }}>Recent Applications</h2>
+            {totalApplications > 0 && (
+              <Link to="/student/applications" style={{ fontSize: '0.8125rem', fontWeight: 500 }}>
+                View all ({totalApplications}) &rarr;
+              </Link>
             )}
           </div>
 
-          {/* Quick Navigation Card */}
-          <div className="card" style={{ padding: '1.75rem' }}>
-            <h3 style={{ fontSize: '1.15rem', marginBottom: '1rem', fontWeight: 700 }}>
-              Quick Navigation
-            </h3>
-            <div style={{ display: 'flex', gap: '0.875rem', flexWrap: 'wrap' }}>
-              <Link to="/opportunities" className="btn btn-primary">
-                🔍 Browse Opportunities
-              </Link>
-              <Link to="/student/applications" className="btn btn-secondary">
-                📋 All Applications
-              </Link>
-              <Link to="/student/profile" className="btn btn-secondary">
-                👤 Profile & Resume
+          {loading ? (
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Loading recent activity...</p>
+          ) : recentApplications.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', marginBottom: '1rem' }}>
+                You haven&apos;t submitted any applications yet. Discover active internships to get started!
+              </p>
+              <Link to="/opportunities" className="btn btn-primary btn-sm">
+                Browse Opportunities &rarr;
               </Link>
             </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="table-modern">
+                <thead>
+                  <tr>
+                    <th>Opportunity</th>
+                    <th>Company</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentApplications.map((app) => (
+                    <tr key={app._id}>
+                      <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                        {app.opportunity?.title || 'Position Unavailable'}
+                      </td>
+                      <td>{app.opportunity?.company || 'Organization'}</td>
+                      <td style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                        {new Date(app.createdAt).toLocaleDateString()}
+                      </td>
+                      <td>
+                        <ApplicationStatusBadge status={app.status} />
+                      </td>
+                      <td>
+                        <Link
+                          to={`/student/applications/${app._id}`}
+                          className="btn btn-outline btn-sm"
+                        >
+                          Details
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Right: Pipeline Distribution & Quick Resources */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {/* Stage Progression Card */}
+          <div
+            style={{
+              padding: '1.75rem',
+              backgroundColor: 'var(--bg-surface)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: 'var(--radius-xl)',
+            }}
+          >
+            <h3 style={{ fontSize: '1rem', marginBottom: '1rem' }}>Pipeline Breakdown</h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.8125rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Applied (Initial)</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{appliedCount}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Under Review</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{underReviewCount}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Shortlisted</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{shortlistedCount}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Interview Scheduled</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--primary-400)' }}>{interviewCount}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Offers Extended</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--success-text)' }}>{selectedCount}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--text-muted)' }}>Archived / Closed</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--text-muted)' }}>{rejectedCount}</span>
+              </div>
+            </div>
           </div>
-        </>
-      )}
+
+          {/* Quick Profile Resource Card */}
+          <div
+            style={{
+              padding: '1.5rem',
+              backgroundColor: 'var(--bg-surface)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: 'var(--radius-xl)',
+            }}
+          >
+            <h4 style={{ fontSize: '0.9375rem', marginBottom: '0.4rem' }}>Resume & Profile Ready?</h4>
+            <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginBottom: '1rem', lineHeight: 1.55 }}>
+              Keep your contact details, education, and resume up to date to improve recruiter response rates.
+            </p>
+            <Link to="/student/profile" className="btn btn-secondary btn-sm" style={{ width: '100%' }}>
+              Manage Resume &rarr;
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

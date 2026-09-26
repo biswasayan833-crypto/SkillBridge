@@ -1,7 +1,7 @@
 import React from 'react';
 
 /**
- * Reusable badge component displaying application status in a refined, accessible style.
+ * Reusable badge component displaying application status with restrained, editorial styling.
  * Supported statuses: 'Applied', 'Under Review', 'Shortlisted', 'Interview', 'Selected', 'Rejected'
  */
 const STATUS_CONFIG = {
@@ -53,25 +53,23 @@ const ApplicationStatusBadge = ({ status }) => {
         display: 'inline-flex',
         alignItems: 'center',
         gap: '0.4rem',
-        padding: '0.25rem 0.65rem',
-        fontSize: '0.75rem',
-        fontWeight: 600,
+        padding: '0.2rem 0.55rem',
+        fontSize: '0.6875rem',
+        fontWeight: 500,
         borderRadius: 'var(--radius-full)',
         border: `1px solid ${config.border}`,
         backgroundColor: config.bg,
         color: config.color,
-        letterSpacing: '0.04em',
-        textTransform: 'uppercase',
+        letterSpacing: '0.02em',
         whiteSpace: 'nowrap',
       }}
     >
       <span
         style={{
-          width: '6px',
-          height: '6px',
+          width: '5px',
+          height: '5px',
           borderRadius: '50%',
           backgroundColor: config.dot,
-          boxShadow: `0 0 6px ${config.dot}`,
           flexShrink: 0,
         }}
       />
